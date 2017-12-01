@@ -480,7 +480,7 @@ class Adauth extends CI_Controller
 			->select('id')
 			->where('username', strtolower($user['username']))
 			->from($tables['users'])
-			->get_compiled_select($tables['users']);
+			->get_compiled_select();
 
 
 
