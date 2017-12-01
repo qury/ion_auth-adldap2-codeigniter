@@ -118,8 +118,6 @@ class Adauth extends CI_Controller
 		$this->data['title'] = $this->lang->line('login_heading');
 		$this->data['theme'] = $this->theme;
 
-		// Debug -REMOVE
-		log_message('error', 'POST: ' . print_r($_POST, true));
 
 		// Form validation rules
 		$this->form_validation->set_rules('identity', str_replace(':', '', $this->lang->line('login_identity_label')), 'trim|required');
@@ -140,7 +138,7 @@ class Adauth extends CI_Controller
 			// Local login
 			if ($this->ion_auth->login($this->input->post('identity'), $this->input->post('password'), $remember))
 			{
-				log_message('error', PHP_EOL . 'Succesful local login' . PHP_EOL);
+				log_message('info', PHP_EOL . 'Succesful local login' . PHP_EOL);
 				//if the login is successful
 				//redirect them back to the home page
 				$this->session->set_flashdata('message', $this->ion_auth->messages());
@@ -148,19 +146,19 @@ class Adauth extends CI_Controller
 			}
 			else
 			{
-				log_message('error', PHP_EOL . 'trying  adauth login' . PHP_EOL);
+				log_message('info', PHP_EOL . 'trying  adauth login' . PHP_EOL);
 				// Login using adldap2 auth
 				$user = $this->ad_auth($this->input->post('identity'), $this->input->post('password'), $this->input->post('domain'));
 
 				if ($user != FALSE)
 				{
-					log_message('error', PHP_EOL . 'Succesful adauth login' . PHP_EOL);
+					log_message('info', PHP_EOL . 'Succesful adauth login' . PHP_EOL);
 
 					// Succesful login
 					// Check wheter it is a new user or an existing one.
 					if ($this->_exists(strtolower($user['username'])))
 					{
-						log_message('error', PHP_EOL . 'Succesful adauth login -- Existing User' . PHP_EOL);
+						log_message('info', PHP_EOL . 'Succesful adauth login -- Existing User' . PHP_EOL);
 						// User exists so we will use a dummy password to ion_auth
 						$dummy_password	 = random_bytes(30);
 						$pre_data		 = [
@@ -185,7 +183,7 @@ class Adauth extends CI_Controller
 					}
 					else
 					{
-						log_message('error', PHP_EOL . 'Succesful adauth login -- New User' . PHP_EOL);
+						log_message('info', PHP_EOL . 'Succesful adauth login -- New User' . PHP_EOL);
 						// New user
 						// We will have to register the user and update the informations in the standard and extra tables
 						//
