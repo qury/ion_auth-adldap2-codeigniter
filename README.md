@@ -4,6 +4,8 @@ Active Directory authentication for Codeigniter on Ion Auth basis
 This piece of software can be used with Codeigniter 3 to authenticate against
 Active Directory domain controllers (or Samba4 domain controllers).
 
+The software is intended to be used on intranets.
+
 # Installation
 
 - install Codeigniter 3
@@ -36,3 +38,5 @@ the user locally. Otherwise it works the same way as Ion Auth.
 - https://www.datatables.net/
 
 
+> This is my first attempt at sharing something that i've written for myself :)
+> Feel free to point out issues or contribute changes.
