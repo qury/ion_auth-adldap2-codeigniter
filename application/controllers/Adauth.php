@@ -479,7 +479,7 @@ class Adauth extends CI_Controller
 		$query = $this->db
 			->select('id')
 			->where('username', strtolower($user['username']))
-			->from($this->users)
+			->from($tables['users'])
 			->get_compiled_select($tables['users']);
 
 
@@ -538,7 +538,10 @@ class Adauth extends CI_Controller
 		$currentGroups	 = $this->ion_auth->get_users_groups($id)->result();
 
 		// Get extra user information
-		$extraData = $this->db->select('*')->where('id', $id)->get($this->user_extra)->result_object();
+		$tablesAdauth = $this->config->item('user_extra', 'tables');
+
+		$extraData = $this->db->select('*')->where('id', $id)->get($tablesAdauth)->result_object();
+
 		if (!isset($extraData[0]) || empty($extraData[0]))
 		{
 			$extraData[0]			 = new stdClass();
@@ -921,17 +924,22 @@ class Adauth extends CI_Controller
 
 		$id = (int) $id;
 
+
+		$tables = $this->config->item('tables', 'ion_auth');
+
 		// Delete from groups
 		$this->db->where('user_id', $id);
-		$this->db->delete($this->groups);
+		$this->db->delete($tables['groups']);
+
+
 
 		// Delete extra prefx
 		$this->db->where('id', $id);
-		$this->db->delete($this->user_extra);
+		$this->db->delete($this->config->item('user_extra', 'tables'));
 
 		// Delete user itself
 		$this->db->where('id', $id);
-		$this->db->delete($this->users);
+		$this->db->delete($tables['users']);
 
 		redirect('adauth', 'refresh');
 	}
@@ -1151,22 +1159,24 @@ class Adauth extends CI_Controller
 		// Deleting the user association first
 		$q = $this->db
 			->where('group_id', $id)
-			->delete($this->users_groups);
+			->delete($tables['users_groups']);
 
 		// Deleting the group itself
 		$q = $this->db
 			->where('id', $id)
-			->delete($this->groups);
+			->delete($tables['groups']);
 
 		redirect('adauth/list_groups', 'refresh');
 	}
 
 	function list_groups()
 	{
+		$tables = $this->config->item('tables', 'ion_auth');
+
 		//select fields and join tables
 		$this->db->select('*');
 		$this->db->order_by('id', 'ASC');
-		$this->db->from($this->groups);
+		$this->db->from($tables['groups']);
 
 		$this->data['members'] = $this->db->get()->result_array();
 
@@ -1185,11 +1195,13 @@ class Adauth extends CI_Controller
 			redirect('adauth', 'refresh');
 		}
 
+		$tables = $this->config->item('tables', 'ion_auth');
+
 		//select fields and join tables
 		$this->data['group'] = $this->db
 				->select('*')
 				->where('id', $group_id)
-				->from($this->groups)
+				->from($tables['groups'])
 				->get()->result_array();
 
 		$this->data['group_id'] = $group_id;
@@ -1199,8 +1211,8 @@ class Adauth extends CI_Controller
 				->select('*')
 				->where('group_id', $group_id)
 				->order_by('user_id', 'ASC')
-				->from($this->users_groups)
-				->join($this->users, '' . $this->users . '.id = ' . $this->users_groups . '.user_id')
+				->from($tables['users_groups'])
+				->join($tables['users'], '' . $tables['users'] . '.id = ' . $tables['groups'] . '.user_id')
 				->get()->result_array();
 
 		$this->render_view('adauth/group_members', $this->data);
@@ -1213,6 +1225,7 @@ class Adauth extends CI_Controller
 			// redirect them to the home page because they must be an administrator to view this
 			return show_error('You must be an administrator to view this page.');
 		}
+		$tables = $this->config->item('tables', 'ion_auth');
 
 		// bail if no group id given
 		$restricted = [1]; // administrator should not be removed using this.
@@ -1227,7 +1240,7 @@ class Adauth extends CI_Controller
 		$q = $this->db
 			->where('group_id', $group_id)
 			->where('user_id', $user_id)
-			->delete($this->users_groups);
+			->delete($table['users_groups']);
 
 		redirect('adauth/group_members/' . $group_id, 'refresh');
 	}
@@ -1240,11 +1253,13 @@ class Adauth extends CI_Controller
 	public function post_reg($user)
 	{
 
+		$tables = $this->config->item('tables', 'ion_auth');
+
 		// Get the user id of the freshly created user
 		$id = $this->db
 				->select('id')
 				->where('username', strtolower($user['username']))
-				->get($this->users)->result();
+				->get($tables['users'])->result();
 
 		$data = [
 			'domain' => $user['domain'],
@@ -1253,7 +1268,7 @@ class Adauth extends CI_Controller
 			'id'	 => $id[0]->id,
 		];
 
-		$this->db->insert($this->user_extra, $data);
+		$this->db->insert($this->config->item('user_extra', 'tables'), $data);
 
 		// Update existing user with informaiton from the domain
 		// This is only triggered if there is an array key 'manual'
@@ -1267,7 +1282,7 @@ class Adauth extends CI_Controller
 				'phone'		 => $user['phone'],
 			];
 
-			$this->db->where('id', $id[0]->id)->update($this->users, $update);
+			$this->db->where('id', $id[0]->id)->update($tables['users'], $update);
 		}
 	}
 
@@ -1287,14 +1302,14 @@ class Adauth extends CI_Controller
 		{
 			//Insert
 			$q = $this->db
-				->insert($this->user_extra, $data);
+				->insert($this->config->item('user_extra', 'tables'), $data);
 		}
 		else
 		{
 			//update
 			$q = $this->db
 				->where('id', (int) $data['id'])
-				->update($this->user_extra, $data);
+				->update($this->config->item('user_extra', 'tables'), $data);
 		}
 
 		/* $q = $this->db
