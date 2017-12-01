@@ -23,14 +23,9 @@ else
         </div>
         <div id="navbar" class="navbar-collapse collapse">
 			<ul class="nav navbar-nav">
-				<li class="active"><a href="#">Home</a></li>
-				<li><a href="<?= site_url('adauth/login'); ?>">Login</a></li>
-				<li><a href="<?= site_url('adauth/logout'); ?>">Logout</a></li>
-				<li><a href="<?= site_url('welcome/test'); ?>">Test</a></li>
-				<?php if ($this->ion_auth->logged_in()): ?>
-					<?php $id = $this->ion_auth->user()->row()->id; ?>
-					<li><a href="<?= site_url('adauth/edit_user/' . $id); ?>">Profile</a></li>
-				<?php endif; ?>
+				<li class="active"><a href="<?= site_url('/') ?>">Home</a></li>
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
 				<li class="dropdown">
 					<?php if ($this->ion_auth->logged_in()): ?>
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
@@ -47,16 +42,11 @@ else
 							<li role="separator" class="divider"></li>
 							<li><a href="<?= site_url('adauth/edit_user/' . $this->ion_auth->user()->row()->id); ?>">Profile</a></li>
 							<li><a href="<?= site_url('adauth/logout'); ?>">Logout</a></li>
-
+						<?php else: ?>
+							<li><a href="<?= site_url('adauth/login'); ?>">Login</a></li>
 						<?php endif; ?>
-
 					</ul>
 				</li>
-			</ul>
-			<ul class="nav navbar-nav navbar-right">
-				<li><a href="../navbar/">Default</a></li>
-				<li class="active"><a href="./">Static top <span class="sr-only">(current)</span></a></li>
-				<li><a href="../navbar-fixed-top/">Fixed top</a></li>
 			</ul>
         </div><!--/.nav-collapse -->
 	</div>
