@@ -15,6 +15,15 @@ The software is intended to be used on intranets.
 - review and configure the adauth config file
 - initiate migration
 
+### Codeigniter configuration.
+
+You can set up ion auth in application third_party directory as well.
+In order to use it please add the below in your config/autoload.php file
+
+<code>
+$autoload['packages'] = array(APPPATH . 'third_party/ion_auth');
+</code>
+
 ## What is included
 
 - Bootstrap 3.3.7    http://getbootstrap.com/
