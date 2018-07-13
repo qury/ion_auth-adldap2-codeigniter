@@ -8,6 +8,7 @@ The software is intended to be used on intranets.
 
 ## Installation
 
+- ensure that you are using PHP 7.x
 - install Codeigniter 3
 - install Ion-Auth
 - install adldap2 using composer:  `composer require adldap2/adldap2`
